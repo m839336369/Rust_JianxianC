@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FA84A79B-0C47-40EA-B100-EACC4332AA6F}</ProjectGuid>
+    <ProjectGuid>{7B18ED1A-3F2D-455B-BA53-ABF364CAB679}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JianxianC</RootNamespace>
@@ -34,10 +34,9 @@
     <Compile Include="Core\AuthME\AuthChecker.cs" />
     <Compile Include="Core\AuthME\AuthMe.cs" />
     <Compile Include="Core\AuthME\CharacterWaiter.cs" />
-    <Compile Include="Core\command.cs" />
-    <Compile Include="Core\Nmap.cs" />
+    <Compile Include="Core\Client_Recieve.cs" />
     <Compile Include="Core\Tcplinsten.cs" />
-    <Compile Include="Core\window.cs" />
+    <Compile Include="Core\Window.cs" />
     <Compile Include="Core\Zoom.cs" />
     <Compile Include="debug.cs" />
     <Compile Include="JianxianC.cs" />
@@ -149,6 +148,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="uLink">
       <HintPath>References\uLink.dll</HintPath>
     </Reference>
@@ -165,6 +166,7 @@
       <HintPath>References\UnityScript.Lang.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

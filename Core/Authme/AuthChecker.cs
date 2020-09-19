@@ -28,7 +28,6 @@ namespace JianxianC.Core.AuthMe
         [RPC]
         public void DestroyFreezeAuthMe()
         {
-            Debug.WriteLog("解冻了");
             _Freezing = false;
             this.enabled = false;
             if (PlayerClient.GetLocalPlayer() != null && PlayerClient.GetLocalPlayer().controllable != null)

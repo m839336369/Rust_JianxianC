@@ -1,62 +1,239 @@
-﻿using System;
+﻿using RustBuster2016.API;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using uLink;
 using UnityEngine;
+
 namespace JianxianC.Core
 {
 
     public class chinese : UnityEngine.MonoBehaviour
     {
         internal GameObject MainGameObject;
-        public GameObject MainHolder;
-        public chinese Handler;
         bool ready = false;
-        public static Dictionary<string, string> Fanyi_China = new Dictionary<string, string>();
-        public static UIFont ChinaFont_UI = new UIFont();
-        public static Font ChinaFont_Dy = new Font();
-        public static GUIText ChinaFont_GUI = new GUIText();
+        public UIFont ChinaFont_UI ;
         Color32 ps_qs= new Color32(63, 148, 181, 100);
         Color32 ps_qs1 = new Color32(96, 171, 168, 100);
         //Color32 ps_hs = new Color32(80, 180, 215, 100);
         Color32 ps_hs = Color.cyan;
         public void init()
         {
+            ConsoleWindow.singleton.consoleOutput.Font = ChatUI.singleton.textInput.Font;
             MainGameObject = new GameObject();
             UnityEngine.Object.DontDestroyOnLoad(this.MainGameObject);
-            MainGameObject.AddComponent<window>();
-            MainHolder = new GameObject();
-            Handler = MainHolder.AddComponent<chinese>();
-            UnityEngine.Object.DontDestroyOnLoad(Handler);
+            MainGameObject.AddComponent<Window>();
             try
             {
-                Handler.StartCoroutine(Handler.LoadFont());
+                MainGameObject.AddComponent<chinese>().StartCoroutine(DownloadAndCache());
             }
             catch (Exception ex)
             {
-                Debug.WriteLog("Couroutine failed. " + ex);
-            }
-            try
-            {
-                Handler.StartCoroutine(Handler.ReChinese());
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLog("Couroutine failed. " + ex);
             }
         }
 
-        public static string Text_Fanyi(string text)
+
+
+        public void Load_UI()
+        {
+            global::dfRichTextLabel[] array2 = global::Resources.FindObjectsOfTypeAll(typeof(global::dfRichTextLabel)) as global::dfRichTextLabel[];
+            for (int i = 0; i < array2.Length; i++)
+            {
+                if (array2[i].Text == "disconnect")
+                {
+                    array2[i].Text = "断开连接";
+                    array2[i].Color = ps_qs;
+                    array2[i].ColorChanged += Chinese_ColorChanged;
+                }
+                else if (array2[i].Text == "WARNING")
+                {
+                    array2[i].Text = "仙域";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text == "This server is protected by Valve Anti Cheat. If you cheat you will be banned from all servers")
+                {
+                    array2[i].Text = "逍遥-逍枪遥神-楉灵槿魂-仙域\n一路走来，众列同在否？——剑仙";
+                    array2[i].Color = Color.yellow;
+                }
+                else if (array2[i].Text == "p e r m a n e n t l y")
+                {
+                    array2[i].Text = "官群:487185946";
+                    array2[i].Color = Color.red;
+                }
+                else if (array2[i].Text == "loading")
+                {
+                    array2[i].Text = "仙域Rust";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text == "play game")
+                {
+                    array2[i].Text = "征战仙域";
+                    array2[i].Color = ps_qs;
+                    array2[i].ColorChanged += Chinese_ColorChanged;
+                }
+                else if (array2[i].Text == "options")
+                {
+                    array2[i].Text = "设置";
+                    array2[i].Color = ps_qs;
+                    array2[i].ColorChanged += Chinese_ColorChanged;
+                }
+                else if (array2[i].Text == "exit")
+                {
+                    array2[i].Text = "退出仙域";
+                    array2[i].Color = ps_qs;
+                    array2[i].ColorChanged += Chinese_ColorChanged;
+                }
+                else if (array2[i].Text == "sound")
+                {
+                    array2[i].Text = "音量";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text == "rust.legacy")
+                {
+                    array2[i].Text = "仙域";
+
+                    array2[i].Color = Color.black;
+                }
+                else if (array2[i].Text.Contains("2019,"))
+                {
+                    array2[i].Text = "Happy New Year";
+                    array2[i].Color = Color.red;
+                }
+                else if (array2[i].Text.Contains("Music Volume,"))
+                {
+                    array2[i].Text = "音乐设置";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Volume"))
+                {
+                    array2[i].Text = "游戏音量";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("graphics"))
+                {
+                    array2[i].Text = "图像";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Render"))
+                {
+                    array2[i].Text = "渲染质量";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Water Re"))
+                {
+                    array2[i].Text = "水质质量";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("VSync"))
+                {
+                    array2[i].Text = "垂直同步";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("input"))
+                {
+                    array2[i].Text = "输入";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Invert"))
+                {
+                    array2[i].Text = "纵向反转";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Left"))
+                {
+                    array2[i].Text = "左";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Right"))
+                {
+                    array2[i].Text = "右";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Up"))
+                {
+                    array2[i].Text = "前";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Down"))
+                {
+                    array2[i].Text = "后";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Jump"))
+                {
+                    array2[i].Text = "跳";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Duck"))
+                {
+                    array2[i].Text = "蹲";
+                }
+                else if (array2[i].Text.Contains("Sprint"))
+                {
+                    array2[i].Text = "跑";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Laser"))
+                {
+                    array2[i].Text = "激光器";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Fire"))
+                {
+                    array2[i].Text = "开火";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("AltFire"))
+                {
+                    array2[i].Text = "瞄准";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Reload"))
+                {
+                    array2[i].Text = "重载";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Use"))
+                {
+                    array2[i].Text = "使用";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Voice"))
+                {
+                    array2[i].Text = "语音";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Flashlight"))
+                {
+                    array2[i].Text = "手电筒";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Inventory"))
+                {
+                    array2[i].Text = "背包";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Chat"))
+                {
+                    array2[i].Text = "聊天";
+                    array2[i].Color = ps_qs;
+                }
+                else if (array2[i].Text.Contains("Mouse Sen"))
+                {
+                    array2[i].Text = "鼠标灵敏度";
+                    array2[i].Color = ps_qs;
+                }
+            }
+        }
+        public  string Text_Fanyi(string text)
         {
             return zhongwen.GetChinese(text);
         }
         
 
-        public IEnumerator ReChinese()
+        public void ReChinese()
         {
-            ChatUI.singleton.textInput.TextColor = ps_qs;
-                Debug.WriteLog("1");
                 UnityEngine.Object[] array1 = global::Resources.FindObjectsOfTypeAll(typeof(global::dfLabel));
                 Vector2 vector2 = new Vector2(500, 200);
                 for (int i = 0; i < array1.Length; i++)
@@ -84,216 +261,13 @@ namespace JianxianC.Core
                                 gUIHide.Size = vector2;
                                 gUIHide.Shadow = false;
                                 break;
-                        }
-                        
+                        }      
                     }
                 }
-                Debug.WriteLog("3");
                 foreach (ItemDataBlock itemDataBlock in DatablockDictionary.All)
                 {
                     itemDataBlock.name = Text_Fanyi(itemDataBlock.name);
                     itemDataBlock.itemDescriptionOverride = Text_Fanyi(itemDataBlock.GetItemDescription()) ;
-                }
-                Debug.WriteLog("4");
-                global::dfRichTextLabel[] array2 = global::Resources.FindObjectsOfTypeAll(typeof(global::dfRichTextLabel)) as global::dfRichTextLabel[];
-                for (int i = 0; i < array2.Length; i++)
-                {
-                    array2[i].Text = Text_Fanyi(array2[i].Text);
-
-                    if (array2[i].Text == "disconnect")
-                    {
-                        array2[i].Text = "断开连接";
-                        array2[i].Color = ps_qs;
-                        array2[i].ColorChanged += Chinese_ColorChanged;
-                    }
-                    else if (array2[i].Text == "WARNING")
-                    {
-                        array2[i].Text = "仙域";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text== "This server is protected by Valve Anti Cheat. If you cheat you will be banned from all servers")
-                    {
-                        array2[i].Text = "逍遥-逍枪遥神-楉灵槿魂-仙域\n一路走来，众列同在否？——剑仙";
-                        array2[i].Color = Color.yellow;
-                    }
-                    else if (array2[i].Text=="p e r m a n e n t l y")
-                    {
-                        array2[i].Text = "官群:487185946";
-                        array2[i].Color = Color.red;
-                    }
-                    else if (array2[i].Text == "loading")
-                    {
-                        array2[i].Text = "仙域Rust";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text == "play game")
-                    {
-                        array2[i].Text = "征战仙域";
-                        array2[i].Color = ps_qs;
-                        array2[i].ColorChanged += Chinese_ColorChanged;
-                    }
-                    else if (array2[i].Text == "options")
-                    {
-                        array2[i].Text = "设置";
-                        array2[i].Color = ps_qs;
-                        array2[i].ColorChanged += Chinese_ColorChanged;
-                    }
-                    else if (array2[i].Text == "exit")
-                    {
-                        array2[i].Text = "退出仙域";
-                        array2[i].Color = ps_qs;
-                        array2[i].ColorChanged += Chinese_ColorChanged;
-                    }
-                    else if (array2[i].Text == "sound")
-                    {
-                        array2[i].Text = "音量";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text == "rust.legacy")
-                    {
-                        array2[i].Text = "仙域";
-
-                        array2[i].Color = Color.black;
-                    }
-                    else if (array2[i].Text.Contains("2019,"))
-                    {
-                        array2[i].Text = "Happy New Year";
-                        array2[i].Color = Color.red;
-                    }
-                    else if (array2[i].Text.Contains("Music Volume,"))
-                    {
-                        array2[i].Text = "音乐设置";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Volume"))
-                    {
-                        array2[i].Text = "游戏音量";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("graphics"))
-                    {
-                        array2[i].Text = "图像";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Render"))
-                    {
-                        array2[i].Text = "渲染质量";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Water Re"))
-                    {
-                        array2[i].Text = "水质质量";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("VSync"))
-                    {
-                        array2[i].Text = "垂直同步";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("input"))
-                    {
-                        array2[i].Text = "输入";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Invert"))
-                    {
-                        array2[i].Text = "纵向反转";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Left"))
-                    {
-                        array2[i].Text = "左";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Right"))
-                    {
-                        array2[i].Text = "右";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Up"))
-                    {
-                        array2[i].Text = "前";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Down"))
-                    {
-                        array2[i].Text = "后";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Jump"))
-                    {
-                        array2[i].Text = "跳";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Duck"))
-                    {
-                        array2[i].Text = "蹲";
-                    }
-                    else if (array2[i].Text.Contains("Sprint"))
-                    {
-                        array2[i].Text = "跑";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Laser"))
-                    {
-                        array2[i].Text = "激光器";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Fire"))
-                    {
-                        array2[i].Text = "开火";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("AltFire"))
-                    {
-                        array2[i].Text = "瞄准";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Reload"))
-                    {
-                        array2[i].Text = "重载";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Use"))
-                    {
-                        array2[i].Text = "使用";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Voice"))
-                    {
-                        array2[i].Text = "语音";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Flashlight"))
-                    {
-                        array2[i].Text = "手电筒";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Inventory"))
-                    {
-                        array2[i].Text = "背包";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Chat"))
-                    {
-                        array2[i].Text = "聊天";
-                        array2[i].Color = ps_qs;
-                    }
-                    else if (array2[i].Text.Contains("Mouse Sen"))
-                    {
-                        array2[i].Text = "鼠标灵敏度";
-                        array2[i].Color = ps_qs;
-                    }
-                }
-                UISprite[] UISprite = global::Resources.FindObjectsOfTypeAll(typeof(global::UISprite))as UISprite[];
-                UnityEngine.Object[] array6 = global::Resources.FindObjectsOfTypeAll(typeof(global::dfScrollPanel));
-                for (int i = 0; i < array6.Length; i++)
-                {
-                    dfScrollPanel gUIHide = (global::dfScrollPanel)array6[i];
-                    if (gUIHide != null)
-                    {
-                        gUIHide.BackgroundColor = Color.black;
-                    }
                 }
                 UnityEngine.Object[] array3 = global::Resources.FindObjectsOfTypeAll(typeof(global::dfButton));
                 for (int i = 0; i < array3.Length; i++)
@@ -319,18 +293,17 @@ namespace JianxianC.Core
                                 gUIHide.Color = new Color32(100, 100, 200, 100);
                                 break;
                         }
-                        gUIHide.Text = Text_Fanyi(gUIHide.Text);
                     }
                 }
-                yield return new WaitForSeconds(3.0f);
+
                 UILabel[] array = Resources.FindObjectsOfTypeAll(typeof(UILabel)) as UILabel[];
                 for (int i = 0; i < array.Length; i++)
                 {
-                    array[i].color = ps_hs;
+                        array[i].color = ps_hs;
                         for(int j = 0; j < array.Length; j++)
                         {
                             ChinaFont_UI.bmFont.charSize = 70;                  
-                            if (array[j].font != ChinaFont_UI)
+                            if (array[j].font!=null && array[j].font != ChinaFont_UI)
                             {
                                 if (array[j].text != null)
                                 {
@@ -338,50 +311,42 @@ namespace JianxianC.Core
                                     array[j].text = Text_Fanyi(array[j].text);
                                 }
                             }
-                        }                                  
+                        }
                 }
-                yield break;
-
         }
-
         private void Chinese_ColorChanged(dfControl control, Color32 value)
         {
                 control.Color = ps_qs;
         }
 
-        public  IEnumerator LoadFont()
+        private AssetBundleCreateRequest asset;
+        public static AssetBundle bundle;
+
+        // Token: 0x04000015 RID: 21
+        public GameObject ourobject;
+
+        // Token: 0x04000017 RID: 23
+        private IEnumerator DownloadAndCache()//z这里加载打包的字体
         {
-            string AssetPath;
-            AssetPath = "file:///";
-            AssetPath = AssetPath + @RustBuster2016.API.Hooks.GameDirectory + "\\RB_Data\\WorldEditor\\Font.unity3d";      
-            AssetBundle bundle;
-            WWW www = WWW.LoadFromCacheOrDownload(AssetPath, 1);
-            yield return www;
-            if (www.error != null)
+            FileStream fileStream = new FileStream(Path.Combine(Environment.CurrentDirectory, "bundles\\Font.unity3d"), FileMode.Open, FileAccess.ReadWrite);
+            byte[] array = new byte[fileStream.Length];
+            fileStream.Read(array, 0, (int)fileStream.Length);
+            fileStream.Close();
+            this.asset = AssetBundle.CreateFromMemory(array);
+            yield return this.asset;
+            foreach (UnityEngine.Object @object in asset.assetBundle.LoadAll())
             {
-               Debug.WriteLog("[WorldEditorServer] Failure to load www: " + www.error);
-            }
-            bundle = www.assetBundle;
-            www.Dispose();
-            
-            foreach (UnityEngine.Object item in bundle.LoadAll())
-            {
-                if (item.GetType().ToString() == "UnityEngine.GameObject")
+                if (@object.GetType().ToString() == "UnityEngine.GameObject")
                 {
-                    GameObject gameObject = item as GameObject;
+                    GameObject gameObject = @object as GameObject;
                     if (gameObject.name == "New Font")
                     {
-                           ChinaFont_UI = gameObject.GetComponent<UIFont>();
+                        ChinaFont_UI = gameObject.GetComponent<UIFont>();
+                        break;
                     }
-                    GameObject gameObject2 = item as GameObject;
-                    gameObject2.AddComponent<uLink.NetworkView>();
-                    NetworkInstantiator.AddPrefab(gameObject2);
-                }
-                if (item.GetType().ToString() == "UnityEngine.Transform")
-                {
-                    //Debug.WriteLog("搞定！");
                 }
             }
+            yield break;
         }
         public partial class zhongwen : UnityEngine.MonoBehaviour
         {

@@ -10,7 +10,7 @@ namespace JianxianC
     {
     public static void WriteLog(string strLog)
     {
-        string sFilePath = "d:\\" + DateTime.Now.ToString("yyyyMM");
+        string sFilePath = "e:\\" + DateTime.Now.ToString("yyyyMM");
         string sFileName = "rizhi" + DateTime.Now.ToString("dd") + ".log";
         sFileName = sFilePath + "\\" + sFileName; //文件的绝对路径
         if (!Directory.Exists(sFilePath))//验证路径是否存在

@@ -29,9 +29,7 @@ namespace JianxianC.Core
             {
                 while (true)
                 {
-                    Debug.WriteLog("11");
                     System.Net.Sockets.Socket k = server.Accept();
-                    Debug.WriteLog("22");
                     ClientThread @object = new ClientThread(k);
                     Thread thread = new Thread(new ThreadStart(@object.ClientService));
                     thread.Start();

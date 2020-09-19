@@ -1,8 +1,6 @@
 ﻿using System;
-using System;
 using Rust;
 using UnityEngine;
-
 namespace JianxianC.Core
 {
     public class Zoom
